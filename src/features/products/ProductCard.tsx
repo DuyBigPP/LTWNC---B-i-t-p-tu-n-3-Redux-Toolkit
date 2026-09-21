@@ -1,6 +1,7 @@
 import type { Product } from './types';
 import { useAppDispatch } from '../../app/hooks';
 import { addToCart } from '../cart/cartSlice';
+import { useFavorites } from '../favorites/FavoritesContext';
 import { useState } from 'react';
 
 interface ProductCardProps {
@@ -10,6 +11,8 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const dispatch = useAppDispatch();
   const [added, setAdded] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const liked = isFavorite(product.id);
 
   const handleAdd = () => {
     dispatch(addToCart(product));
@@ -33,6 +36,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           loading="lazy"
         />
         <span className="product-card__category">{product.category}</span>
+        <button
+          className={`product-card__fav-btn ${liked ? 'product-card__fav-btn--active' : ''}`}
+          onClick={() => toggleFavorite(product.id)}
+          aria-label={liked ? 'Bỏ yêu thích' : 'Thêm yêu thích'}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill={liked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
       </div>
       <div className="product-card__body">
         <h3 className="product-card__name">{product.name}</h3>
